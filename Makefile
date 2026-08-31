@@ -1,7 +1,7 @@
 .PHONY: build run
 	
 build:
-	@go build -o bin/api ./cmd/api 
+	@go build -trimpath -ldflags="-s -w" -o bin/api ./cmd/api 
 
 run: build
 	@./bin/api
