@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"github.com/devsujalpatel/olx-api/internal/config"
+	"github.com/devsujalpatel/olx-api/internal/handlers"
 )
 
 func main() {
+	// checking if env is load
 	cfg := config.MustLoad()
   fmt.Println("starting olx server...")
   
@@ -17,15 +19,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	// creating health check route
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request){
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status": "ok" }`))
-	})
+	mux.HandleFunc("GET /healthz", handlers.Health)
 	
-	// geting port from e.env
- 
-
   // starting the http server
 	 srv := http.Server{
 		Addr: ":" + cfg.Port,
