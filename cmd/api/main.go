@@ -7,12 +7,19 @@ import (
 	"time"
 
 	"github.com/devsujalpatel/olx-api/internal/config"
+	"github.com/devsujalpatel/olx-api/internal/db"
 	"github.com/devsujalpatel/olx-api/internal/handlers"
 )
 
 func main() {
 	// checking if env is load
 	cfg := config.MustLoad()
+	_, err := db.Connect(cfg.DatabaseUrl)
+	if err != nil {
+		log.Fatalf("main.db.connect: %v", err)
+	}
+	
+  fmt.Println("database connected")
   fmt.Println("starting olx server...")
   
   // Creating mux or route
