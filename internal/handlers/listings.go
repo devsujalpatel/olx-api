@@ -21,14 +21,17 @@ type ListingHandler struct {
 	db *sql.DB
 }
 
+// Contructor function
 func NewListingHandler(db *sql.DB) *ListingHandler {
 	return &ListingHandler {
 		db: db,
 	}
 }
 
+// GetAllListings
 func (lh ListingHandler) List(w http.ResponseWriter, r *http.Request) {
-		rows, err := lh.db.Query(
+		ctx := r.Context() // request scoped context
+		rows, err := lh.db.QueryContext(ctx, 
 				`SELECT id, title, description, price, city, created_at
 			 	FROM listings
 			 	ORDER BY created_at DESC
@@ -61,10 +64,11 @@ func (lh ListingHandler) List(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(listings)
 }
 
-
+// Delete Listing
 func (lh ListingHandler) Delete(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context() // request scoped context
 		id := r.PathValue("id")
-		_, err := lh.db.Exec(`DELETE FROM listings WHERE id = $1`, id)
+		_, err := lh.db.ExecContext(ctx, `DELETE FROM listings WHERE id = $1`, id)
 		if err != nil {
 			log.Printf("delete: %v", err)
 			http.Error(w, "internal error", http.StatusInternalServerError)
