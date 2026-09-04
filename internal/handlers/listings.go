@@ -27,7 +27,7 @@ func NewListingHandler(db *sql.DB) *ListingHandler {
 	}
 }
 
-func (lh ListingHandler) GetListing(w http.ResponseWriter, r *http.Request) {
+func (lh ListingHandler) List(w http.ResponseWriter, r *http.Request) {
 		rows, err := lh.db.Query(
 				`SELECT id, title, description, price, city, created_at
 			 	FROM listings
@@ -62,7 +62,7 @@ func (lh ListingHandler) GetListing(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func (lh ListingHandler) DeleteListing(w http.ResponseWriter, r *http.Request) {
+func (lh ListingHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		_, err := lh.db.Exec(`DELETE FROM listings WHERE id = $1`, id)
 		if err != nil {
