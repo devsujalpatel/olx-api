@@ -17,9 +17,18 @@ type listing struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func Listing(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		rows, err := db.Query(
+type ListingHandler struct {
+	db *sql.DB
+}
+
+func NewListingHandler(db *sql.DB) *ListingHandler {
+	return &ListingHandler {
+		db: db,
+	}
+}
+
+func (lh ListingHandler) GetListing(w http.ResponseWriter, r *http.Request) {
+		rows, err := lh.db.Query(
 				`SELECT id, title, description, price, city, created_at
 			 	FROM listings
 			 	ORDER BY created_at DESC
@@ -48,22 +57,18 @@ func Listing(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "internal error", http.StatusInternalServerError)
 			return
 		}
-
 		w.Header().Set("Content-Type", "application/json")
-
 		_ = json.NewEncoder(w).Encode(listings)
-	}
 }
 
-func DeleteListing(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+
+func (lh ListingHandler) DeleteListing(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
-		_, err := db.Exec(`DELETE FROM listings WHERE id = $1`, id)
+		_, err := lh.db.Exec(`DELETE FROM listings WHERE id = $1`, id)
 		if err != nil {
-			log.Printf("delete: %w", err)
+			log.Printf("delete: %v", err)
 			http.Error(w, "internal error", http.StatusInternalServerError)
 			return
 		}
 		w.WriteHeader(http.StatusNoContent)
-	}
 }
