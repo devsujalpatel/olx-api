@@ -27,7 +27,8 @@ func main() {
 
 	// creating health check route
 	mux.HandleFunc("GET /healthz", handlers.Health)
-	mux.HandleFunc("GET /listings", handlers.List(db))
+	mux.HandleFunc("GET /listings", handlers.Listing(db))
+	mux.HandleFunc("DELETE /listings/{id}", handlers.DeleteListing(db))
 
   // starting the http server
 	 srv := http.Server{
