@@ -11,6 +11,7 @@ import (
 	"github.com/devsujalpatel/olx-api/internal/config"
 	"github.com/devsujalpatel/olx-api/internal/db"
 	"github.com/devsujalpatel/olx-api/internal/handlers"
+	"github.com/devsujalpatel/olx-api/internal/middleware"
 )
 
 func main() {
@@ -22,11 +23,11 @@ func main() {
 	}
 
 	// Logger
-	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+	logHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		AddSource: true,
 		Level: slog.LevelInfo,
 	})
-	logger := slog.New(handler)
+	logger := slog.New(logHandler)
 	slog.SetDefault(logger)
 
   fmt.Println("database connected")
@@ -42,16 +43,18 @@ func main() {
 	mux.HandleFunc("GET /listings", lh.List)
 	mux.HandleFunc("DELETE /listings/{id}", lh.Delete)
 
+	handler := middleware.RequestId(mux)
+
   // starting the http server
 	 srv := http.Server{
 		Addr: ":" + cfg.Port,
-		Handler: mux,
+		Handler: handler,
 		ReadTimeout: time.Second * 10,
 		WriteTimeout: time.Second * 30,
 		IdleTimeout: time.Second * 60,
 	}
+	
 	log.Printf("server is listening on %s", srv.Addr)
-
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatalf("server failed: %v", err)
 	}
