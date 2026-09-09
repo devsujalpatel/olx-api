@@ -44,7 +44,7 @@ func (lh ListingHandler) List(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			lh.logger.Error("listings query error", "err", err)
-			http.Error(w, "internal error", http.StatusInternalServerError)
+			httpx.Error(w, http.StatusInternalServerError, "Something went wrong", httpx.CodeInternalError)
 			return
 		}
 
@@ -54,7 +54,7 @@ func (lh ListingHandler) List(w http.ResponseWriter, r *http.Request) {
 			var l listing
 			if err := rows.Scan(&l.ID, &l.Title, &l.Description, &l.Price, &l.City, &l.CreatedAt); err != nil {
 				lh.logger.Error("rows scan error", "err", err)
-				http.Error(w, "internal error", http.StatusInternalServerError)
+				httpx.Error(w, http.StatusInternalServerError, "Something went wrong", httpx.CodeInternalError)
 				return
 			}
 
@@ -64,7 +64,7 @@ func (lh ListingHandler) List(w http.ResponseWriter, r *http.Request) {
 
 		if err := rows.Err(); err != nil {
 			lh.logger.Error("rows error", "err", err)
-			http.Error(w, "internal error", http.StatusInternalServerError)
+			httpx.Error(w, http.StatusInternalServerError, "Something went wrong", httpx.CodeInternalError)
 			return
 		}
 
