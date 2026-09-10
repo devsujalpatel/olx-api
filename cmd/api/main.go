@@ -38,9 +38,10 @@ func main() {
   // Creating mux or route
 	mux := http.NewServeMux()
 
-	// creating health check route
+	// health check route
 	mux.HandleFunc("GET /healthz", handlers.Health)
-	mux.HandleFunc("GET /listings", lh.List)
+	// listing routes
+	mux.HandleFunc("GET /listings", lh.List) 
 	mux.HandleFunc("DELETE /listings/{id}", lh.Delete)
 	mux.HandleFunc("POST /listings", lh.Create)
 
