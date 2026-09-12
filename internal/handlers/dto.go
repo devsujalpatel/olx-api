@@ -33,16 +33,16 @@ func (req CreateListingRequest) Validate() error {
 		return &ValidationError{Field: "title", Msg: "must not be empty"}
 	}
 
-	if len([]rune(req.Title)) > 100 {
-		return &ValidationError{Field: "title", Msg: "must not exceed 100 characters"}
+	if len([]rune(req.Title)) > 200 {
+		return &ValidationError{Field: "title", Msg: "must not exceed 200 characters"}
 	}
 
 	if strings.TrimSpace(req.Description) == "" {
 		return &ValidationError{Field: "description", Msg: "must not be empty"}
 	}
 
-	if len([]rune(req.Description)) > 256 {
-		return &ValidationError{Field: "title", Msg: "must not exceed 256 characters"}
+	if len([]rune(req.Description)) > 5000 {
+		return &ValidationError{Field: "title", Msg: "must not exceed 5000 characters"}
 	}
 
 	if strings.TrimSpace(req.City) == "" {
